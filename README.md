@@ -4,6 +4,20 @@
 
 React implementation of image fast style transfer
 
+## FAQ
+
+### What is this?
+
+This is an implementation of the Fast Neural Style Transfer algorithm running purely on the browser using the Tensorflow.js library. Basically, a neural network attempts to "draw" one picture from the image you uploaded in the style of another.
+
+### Is my data safe?
+
+Your data and pictures here never leave your computer! In fact, this is one of the main advantages of running neural networks in your browser. Instead of sending us your data, we send you both the model and the code to run the model. These are then run by your browser.
+
+### How big are the models I'm downloading?
+
+For each available style, your browser will download a model around ~6.6MB in size. Be careful if you have limited bandwidth (mobile data users). Besides The Gleaner by Miller style, all other models will be downloaded once you click them.
+
 ## Requirements
 
 * Browser (Chrome is perfered)
