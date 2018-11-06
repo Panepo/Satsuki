@@ -6,7 +6,7 @@ import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
 import GridListTileBar from '@material-ui/core/GridListTileBar'
 import IconButton from '@material-ui/core/IconButton'
-import InfoIcon from '@material-ui/icons/Info'
+import WallpaperIcon from '@material-ui/icons/Wallpaper'
 import imageData from '../images/index'
 
 const styles = theme => ({
@@ -48,7 +48,7 @@ class MucGallery extends React.Component {
                 <IconButton
                   className={classes.icon}
                   onClick={() => this.handleClick(data.id)}>
-                  <InfoIcon />
+                  <WallpaperIcon />
                 </IconButton>
               }
             />
@@ -66,7 +66,7 @@ class MucGallery extends React.Component {
                 <IconButton
                   className={classes.icon}
                   onClick={() => this.handleClick(data.id)}>
-                  <InfoIcon />
+                  <WallpaperIcon />
                 </IconButton>
               }
             />
