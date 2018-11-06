@@ -1,10 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import * as tf from '@tensorflow/tfjs'
-// import * as srcnn from './Srcnn'
-// import * as util from './Srcnn.util'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { modelSelect } from '../actions'
+import * as tf from '@tensorflow/tfjs'
+import * as styleTrans from './StyleTrans'
 import MucProgress from '../componments/MucProgress'
 import MucText from '../componments/MucText'
+import MucGallery from '../componments/MucGallery'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
@@ -35,23 +38,18 @@ const styles = theme => ({
   },
   hidden: {
     display: 'none'
+  },
+  canvas: {
+    marginLeft: '10px',
+    marginRight: '10px'
   }
 })
 
 class Content extends React.Component {
   state = {
     isLoading: true,
-    isBusy: false,
     imageFile: [],
-    imageWidth: 200,
-    imageHeight: 200,
-    imageSize: 1000000,
-    processTime: '0',
-    scale: 2,
-    modelPadding: 6,
-    PredictSplit: true,
-    imageSplitW: 5,
-    imageSplitH: 5
+    processTime: '0'
   }
 
   constructor(props) {
@@ -59,7 +57,6 @@ class Content extends React.Component {
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
     this.handlePredict = this.handlePredict.bind(this)
-    this.handleSplit = this.handleSplit.bind(this)
   }
 
   // ================================================================================
@@ -67,9 +64,38 @@ class Content extends React.Component {
   // ================================================================================
 
   componentDidMount = async () => {
-    // this.model = await tf.loadModel(srcnn.modelPath)
-    // await this.model.predict(tf.zeros([1, 32, 32, 1])).dispose()
+    this.model = await tf.loadModel(styleTrans.modelPath1)
+    // await this.model.predict(tf.zeros([null, 256, 256, 3])).dispose()
     this.setState({ isLoading: false })
+  }
+
+  componentDidUpdate = async prevProps => {
+    if (prevProps.modelSelected !== this.props.modelSelected) {
+      switch (this.props.modelSelected) {
+        case 1:
+          this.model = await tf.loadModel(styleTrans.modelPath1)
+          this.handleSwitchStyle()
+          break
+        case 2:
+          this.model = await tf.loadModel(styleTrans.modelPath2)
+          this.handleSwitchStyle()
+          break
+        case 3:
+          this.model = await tf.loadModel(styleTrans.modelPath3)
+          this.handleSwitchStyle()
+          break
+        case 4:
+          this.model = await tf.loadModel(styleTrans.modelPath4)
+          this.handleSwitchStyle()
+          break
+        case 5:
+          this.model = await tf.loadModel(styleTrans.modelPath5)
+          this.handleSwitchStyle()
+          break
+        default:
+          break
+      }
+    }
   }
 
   // ================================================================================
@@ -82,10 +108,7 @@ class Content extends React.Component {
 
     for (let i = 0; i < event.target.files.length; i += 1) {
       let dataTemp
-      if (
-        event.target.files[i] != null &&
-        event.target.files[i].size <= this.state.imageSize
-      ) {
+      if (event.target.files[i] != null) {
         dataTemp = URL.createObjectURL(event.target.files[i])
         data.push(dataTemp)
       }
@@ -103,40 +126,19 @@ class Content extends React.Component {
       const ctx = canvas.getContext('2d')
 
       image.onload = () => {
-        if (this.state.PredictSplit) {
-          canvas.width = image.naturalWidth
-          canvas.height = image.naturalHeight
-          ctx.drawImage(image, 0, 0)
-          this.setState({
-            imageWidth: canvas.width,
-            imageHeight: canvas.height,
-            imageSplitW: Math.ceil(canvas.width / 75),
-            imageSplitH: Math.ceil(canvas.height / 75)
-          })
-        } else {
-          /* let [widthM, heightM] = util.limitWidthHeight(
-            image.naturalWidth,
-            image.naturalHeight,
-            100
-          ) */
-          canvas.width = image.naturalWidth
-          canvas.height = image.naturalHeight
-          ctx.drawImage(
-            image,
-            0,
-            0,
-            image.naturalWidth,
-            image.naturalHeight,
-            0,
-            0,
-            image.naturalWidth,
-            image.naturalHeight
-          )
-          this.setState({
-            imageWidth: canvas.width,
-            imageHeight: canvas.height
-          })
-        }
+        canvas.width = 256
+        canvas.height = 256
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.naturalWidth,
+          image.naturalHeight,
+          0,
+          0,
+          256,
+          256
+        )
       }
     } else {
       this.setState({
@@ -149,60 +151,27 @@ class Content extends React.Component {
     this.setState({
       imageFile: []
     })
-    const canvas = document.getElementById('inputCanvas')
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, this.state.imageWidth, this.state.imageHeight)
+    const canvasi = document.getElementById('inputCanvas')
+    const ctxi = canvasi.getContext('2d')
+    ctxi.clearRect(0, 0, 256, 256)
+
+    const canvaso = document.getElementById('outputCanvas')
+    const ctxo = canvaso.getContext('2d')
+    ctxo.clearRect(0, 0, 256, 256)
   }
 
   handlePredict = async () => {
-    const {
-      imageWidth,
-      imageHeight,
-      scale,
-      imageSplitW,
-      imageSplitH,
-      PredictSplit,
-      modelPadding
-    } = this.state
     const tstart = performance.now()
-    /* if (PredictSplit) {
-      await srcnn.predictSplit(
-        this.model,
-        'inputCanvas',
-        'outputCanvas',
-        imageWidth,
-        imageHeight,
-        imageSplitW,
-        imageSplitH,
-        scale,
-        modelPadding
-      )
-    } else {
-      await srcnn.predict(
-        this.model,
-        'inputCanvas',
-        'outputCanvas',
-        imageWidth,
-        imageHeight,
-        scale,
-        modelPadding
-      )
-    } */
+    styleTrans.predict(this.model, 'inputCanvas', 'outputCanvas')
     const tend = performance.now()
     this.setState({
       processTime: Math.floor(tend - tstart).toString() + ' ms'
     })
   }
 
-  handleSplit = () => {
-    if (this.state.PredictSplit) {
-      this.setState({
-        PredictSplit: false
-      })
-    } else {
-      this.setState({
-        PredictSplit: true
-      })
+  handleSwitchStyle = () => {
+    if (this.state.imageFile.length > 0) {
+      this.handlePredict()
     }
   }
 
@@ -222,11 +191,11 @@ class Content extends React.Component {
       }
     }
 
-    const renderEnlarge = () => {
+    const renderTransfer = () => {
       if (this.state.imageFile.length > 0) {
         return (
           <Button color="primary" onClick={this.handlePredict}>
-            Enlarge
+            Transfer
           </Button>
         )
       }
@@ -245,7 +214,7 @@ class Content extends React.Component {
           />
         </Button>
         {renderClear()}
-        {renderEnlarge()}
+        {renderTransfer()}
       </div>
     )
   }
@@ -263,6 +232,12 @@ class Content extends React.Component {
         />
         <Grid container justify="center" alignItems="center">
           <canvas className={this.props.classes.canvas} id="inputCanvas" />
+          <canvas
+            className={this.props.classes.canvas}
+            id="outputCanvas"
+            width={256}
+            height={256}
+          />
         </Grid>
       </div>
     )
@@ -270,7 +245,7 @@ class Content extends React.Component {
 
   renderProceeTime = () => {
     const { classes } = this.props
-    if (this.state.imageFile.length > 0 && this.state.isBusy === false) {
+    if (this.state.imageFile.length > 0) {
       return (
         <div>
           <Divider className={classes.border} />
@@ -279,41 +254,13 @@ class Content extends React.Component {
             modelLabel="Process Time"
             modelValue={this.state.processTime}
           />
-          <MucText
-            modelId="text-input-width"
-            modelLabel="Width"
-            modelValue={this.state.imageWidth}
-          />
-          <MucText
-            modelId="text-input-height"
-            modelLabel="Height"
-            modelValue={this.state.imageHeight}
-          />
         </div>
       )
     }
   }
 
-  renderOutput = () => {
-    const { classes } = this.props
-    const { imageWidth, imageHeight, scale } = this.state
-    if (this.state.imageFile.length > 0) {
-      return (
-        <Paper className={classes.paper}>
-          <Grid container justify="center" alignItems="center">
-            <canvas
-              id="outputCanvas"
-              width={imageWidth * scale}
-              height={imageHeight * scale}
-            />
-          </Grid>
-        </Paper>
-      )
-    }
-  }
-
   render() {
-    const { classes } = this.props
+    const { classes, modelSelect, modelSelected } = this.props
     if (this.state.isLoading) {
       return (
         <main className={classes.root}>
@@ -338,21 +285,15 @@ class Content extends React.Component {
             className={classes.grid}
             justify="center"
             spacing={16}>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <Paper className={classes.paper}>
                 {this.renderButton()}
                 <Divider className={classes.border} />
+                <MucGallery selected={modelSelected} propFunc={modelSelect} />
+                <Divider className={classes.border} />
                 {this.renderImage()}
                 {this.renderProceeTime()}
-                <MucProgress
-                  modelText={'Processing...'}
-                  modelSwitch={this.state.isBusy}
-                  modelBorderUp
-                />
               </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              {this.renderOutput()}
             </Grid>
           </Grid>
         </main>
@@ -362,7 +303,24 @@ class Content extends React.Component {
 }
 
 Content.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  modelSelect: PropTypes.func.isRequired,
+  modelSelected: PropTypes.number.isRequired
 }
 
-export default withRoot(withStyles(styles)(Content))
+const mapStateToProps = state => {
+  return {
+    modelSelected: state.reducerModel.modelSelected
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    modelSelect: bindActionCreators(modelSelect, dispatch)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRoot(withStyles(styles)(Content)))

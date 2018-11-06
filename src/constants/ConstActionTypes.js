@@ -1,1 +1,1 @@
-export const IFRMAE_SWITCH = 'IFRMAE_SWITCH'
+export const MODEL_SELECT = 'MODEL_SELECT'

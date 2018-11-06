@@ -3,6 +3,10 @@ export const listLink = [
 ]
 
 export const listDrawer = [
+  {
+    text: 'zaidalyafeai',
+    link: 'https://github.com/zaidalyafeai/zaidalyafeai.github.io'
+  },
   { text: 'Tensorflow', link: 'https://www.tensorflow.org/' },
   { text: 'Tensorflow.js', link: 'https://js.tensorflow.org/' },
   { text: 'Keras', link: 'https://github.com/keras-team/keras' },

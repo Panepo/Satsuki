@@ -1,8 +1,8 @@
 import * as types from '../constants/ConstActionTypes'
 
-export function iframeSwitch(onoff) {
+export function modelSelect(value) {
   return {
-    type: types.IFRMAE_SWITCH,
-    onoff
+    type: types.MODEL_SELECT,
+    value
   }
 }
