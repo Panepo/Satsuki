@@ -26,7 +26,7 @@ Here are the results. From left to right, the first column is the input image, t
 
 <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.jpg" alt="black0" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black1.png" alt="black1" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black2.png" alt="black2" height="256" width="256">
 
-<img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/black3.png" alt="black3" height="256" width="256"> <img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/black4.png" alt="black4" height="256" width="256"> <img src="https://github.com/Panepo/Yayoi-js/blob/master/doc/black5.png" alt="black5" height="256" width="256">
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black3.png" alt="black3" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black4.png" alt="black4" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black5.png" alt="black5" height="256" width="256">
 
 ## Reference
 
