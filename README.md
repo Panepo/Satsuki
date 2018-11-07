@@ -4,7 +4,7 @@
 
 React implementation of image fast style transfer
 
-<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.png" alt="black0" height="256" width="256"> + <img src="https://github.com/Panepo/Satsuki/blob/master/src/images/style2.png" alt="style2" height="256" width="256"> = <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black2.png" alt="black2" height="256" width="256">
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.png" alt="black0" height="256" width="256"> + <img src="https://github.com/Panepo/Satsuki/blob/master/src/images/style2.jpg" alt="style2" height="256" width="256"> = <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black2.png" alt="black2" height="256" width="256">
 
 ## FAQ
 
