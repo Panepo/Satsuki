@@ -21,7 +21,7 @@ For each available style, your browser will download a model around ~6.6MB in si
 ## Requirements
 
 * Browser (Chrome is perfered)
-* Image for style transfer
+* Image for style transfer or a webcam
 
 ## Usage
 
@@ -38,9 +38,13 @@ First visit this [page](https://panepo.github.io/Satsuki/) and follow these step
 
 Here are the results. From left to right, the first column is the input image, the second to sixth image are style-transfered image.
 
-<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.jpg" alt="black0" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black1.png" alt="black1" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black2.png" alt="black2" height="256" width="256">
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.png" alt="black0" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black1.png" alt="black1" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black2.png" alt="black2" height="256" width="256">
 
 <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black3.png" alt="black3" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black4.png" alt="black4" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black5.png" alt="black5" height="256" width="256">
+
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black20.png" alt="black0" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black21.png" alt="black1" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black22.png" alt="black2" height="256" width="256">
+
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black23.png" alt="black3" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black24.png" alt="black4" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black25.png" alt="black5" height="256" width="256">
 
 ## Reference
 
@@ -60,6 +64,7 @@ Here are the results. From left to right, the first column is the input image, t
 * [Create React App](https://github.com/facebook/create-react-app)
 * [Material Design Lite](https://getmdl.io/)
 * [Material-UI](https://material-ui.com/)
+* [react-webcam](https://github.com/mozmorris/react-webcam)
 
 ## Develop
 
