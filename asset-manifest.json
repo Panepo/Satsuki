@@ -1,8 +1,8 @@
 {
   "main.css": "static/css/main.56c8847f.css",
   "main.css.map": "static/css/main.56c8847f.css.map",
-  "main.js": "static/js/main.dda9dd81.js",
-  "main.js.map": "static/js/main.dda9dd81.js.map",
+  "main.js": "static/js/main.b77d103b.js",
+  "main.js.map": "static/js/main.b77d103b.js.map",
   "static\\media\\roboto-latin-100.woff": "static/media/roboto-latin-100.e9dbbe8a.woff",
   "static\\media\\roboto-latin-100.woff2": "static/media/roboto-latin-100.987b8457.woff2",
   "static\\media\\roboto-latin-100italic.woff": "static/media/roboto-latin-100italic.d704bb3d.woff",
@@ -27,8 +27,9 @@
   "static\\media\\roboto-latin-900.woff2": "static/media/roboto-latin-900.19b7a0ad.woff2",
   "static\\media\\roboto-latin-900italic.woff": "static/media/roboto-latin-900italic.bc833e72.woff",
   "static\\media\\roboto-latin-900italic.woff2": "static/media/roboto-latin-900italic.7b770d6c.woff2",
-  "static\\media\\style1.jpg": "static/media/style1.4126850f.jpg",
-  "static\\media\\style2.jpg": "static/media/style2.fe67e89d.jpg",
-  "static\\media\\style3.jpg": "static/media/style3.b57b9ee2.jpg",
-  "static\\media\\style4.jpg": "static/media/style4.81440425.jpg"
+  "static\\media\\style1.jpg": "static/media/style1.db1f2702.jpg",
+  "static\\media\\style2.jpg": "static/media/style2.77262ef6.jpg",
+  "static\\media\\style3.jpg": "static/media/style3.b8f62d06.jpg",
+  "static\\media\\style4.jpg": "static/media/style4.6f3fa517.jpg",
+  "static\\media\\style5.jpg": "static/media/style5.7cf99be7.jpg"
 }
