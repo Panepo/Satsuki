@@ -4,6 +4,8 @@
 
 React implementation of image fast style transfer
 
+<img src="https://github.com/Panepo/Satsuki/blob/master/doc/black0.png" alt="black0" height="256" width="256"> <img src="https://github.com/Panepo/Satsuki/blob/master/doc/black1.png" alt="black1" height="256" width="256">
+
 ## FAQ
 
 ### What is this?
