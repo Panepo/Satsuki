@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { modelSelect } from '../actions'
 import * as tf from '@tensorflow/tfjs'
 import * as styleTrans from './StyleTrans'
+import Webcam from 'react-webcam'
 import MucProgress from '../componments/MucProgress'
 import MucText from '../componments/MucText'
 import MucGallery from '../componments/MucGallery'
@@ -48,8 +49,18 @@ const styles = theme => ({
 class Content extends React.Component {
   state = {
     isLoading: true,
+    isPlaying: false,
+    isCaptured: false,
     imageFile: [],
-    processTime: '0'
+    videoWidth: 640,
+    videoHeight: 360,
+    videoBuff: null,
+    videoConstraints: {
+      width: 1280,
+      height: 720,
+      facingMode: 'user'
+    },
+    processTime: 0
   }
 
   constructor(props) {
@@ -57,6 +68,8 @@ class Content extends React.Component {
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
     this.handlePredict = this.handlePredict.bind(this)
+    this.handleWebcam = this.handleWebcam.bind(this)
+    this.handleCapture = this.handleCapture.bind(this)
   }
 
   // ================================================================================
@@ -96,6 +109,14 @@ class Content extends React.Component {
           break
       }
     }
+  }
+
+  // ================================================================================
+  // HTML functions
+  // ================================================================================
+
+  setWebcamRef = webcam => {
+    this.webcam = webcam
   }
 
   // ================================================================================
@@ -149,7 +170,8 @@ class Content extends React.Component {
 
   handleClear = () => {
     this.setState({
-      imageFile: []
+      imageFile: [],
+      isCaptured: false
     })
     const canvasi = document.getElementById('inputCanvas')
     const ctxi = canvasi.getContext('2d')
@@ -162,7 +184,7 @@ class Content extends React.Component {
 
   handlePredict = async () => {
     const tstart = performance.now()
-    styleTrans.predict(this.model, 'inputCanvas', 'outputCanvas')
+    await styleTrans.predict(this.model, 'inputCanvas', 'outputCanvas')
     const tend = performance.now()
     this.setState({
       processTime: Math.floor(tend - tstart).toString() + ' ms'
@@ -170,8 +192,46 @@ class Content extends React.Component {
   }
 
   handleSwitchStyle = () => {
-    if (this.state.imageFile.length > 0) {
+    if (this.state.imageFile.length > 0 || this.state.isCaptured) {
       this.handlePredict()
+    }
+  }
+
+  handleWebcam = () => {
+    if (this.state.isPlaying) {
+      this.setState({
+        isPlaying: false,
+        videoBuff: null
+      })
+    } else {
+      this.setState({ isPlaying: true, isCaptured: false, imageFile: [] })
+    }
+  }
+
+  handleCapture = async () => {
+    await this.setState({
+      isPlaying: false,
+      isCaptured: true,
+      videoBuff: this.webcam.getScreenshot()
+    })
+    const image = document.getElementById('camInputImage')
+    const canvas = document.getElementById('inputCanvas')
+    const ctx = canvas.getContext('2d')
+
+    image.onload = () => {
+      canvas.width = 256
+      canvas.height = 256
+      ctx.drawImage(
+        image,
+        image.naturalWidth / 2 - 256,
+        image.naturalHeight / 2 - 256,
+        512,
+        512,
+        0,
+        0,
+        256,
+        256
+      )
     }
   }
 
@@ -182,7 +242,7 @@ class Content extends React.Component {
   renderButton = () => {
     const { classes } = this.props
     const renderClear = () => {
-      if (this.state.imageFile.length > 0) {
+      if (this.state.imageFile.length > 0 || this.state.isCaptured) {
         return (
           <Button color="primary" onClick={this.handleClear}>
             Clear
@@ -192,10 +252,36 @@ class Content extends React.Component {
     }
 
     const renderTransfer = () => {
-      if (this.state.imageFile.length > 0) {
+      if (this.state.imageFile.length > 0 || this.state.isCaptured) {
         return (
           <Button color="primary" onClick={this.handlePredict}>
             Transfer
+          </Button>
+        )
+      }
+    }
+
+    const renderWebcamPower = onoff => {
+      if (onoff) {
+        return (
+          <Button color="secondary" onClick={this.handleWebcam}>
+            Webcam Stop
+          </Button>
+        )
+      } else {
+        return (
+          <Button color="primary" onClick={this.handleWebcam}>
+            Webcam Start
+          </Button>
+        )
+      }
+    }
+
+    const renderWebcamCapture = onoff => {
+      if (onoff) {
+        return (
+          <Button color="primary" onClick={this.handleCapture}>
+            Capture
           </Button>
         )
       }
@@ -213,13 +299,15 @@ class Content extends React.Component {
             required
           />
         </Button>
+        {renderWebcamPower(this.state.isPlaying)}
+        {renderWebcamCapture(this.state.isPlaying)}
         {renderClear()}
         {renderTransfer()}
       </div>
     )
   }
 
-  renderImage = () => {
+  renderHidden = () => {
     return (
       <div>
         <img
@@ -230,22 +318,53 @@ class Content extends React.Component {
           height="100%"
           alt={this.state.text}
         />
-        <Grid container justify="center" alignItems="center">
-          <canvas className={this.props.classes.canvas} id="inputCanvas" />
-          <canvas
-            className={this.props.classes.canvas}
-            id="outputCanvas"
-            width={256}
-            height={256}
-          />
-        </Grid>
+        <img
+          className={this.props.classes.hidden}
+          id="camInputImage"
+          src={this.state.videoBuff}
+          alt={''}
+          width={this.state.videoConstraints.width}
+          height={this.state.videoConstraints.height}
+        />
       </div>
     )
   }
 
+  renderOutput = () => {
+    if (this.state.isPlaying) {
+      return (
+        <Grid container justify="center" alignItems="center">
+          <Webcam
+            audio={false}
+            width={this.state.videoWidth}
+            height={this.state.videoHeight}
+            ref={this.setWebcamRef}
+            screenshotWidth={this.state.videoConstraints.width}
+            videoConstraints={this.state.videoConstraints}
+          />
+          <canvas className={this.props.classes.canvas} id="camInputCanvas" />
+        </Grid>
+      )
+    } else {
+      return (
+        <div>
+          <Grid container justify="center" alignItems="center">
+            <canvas className={this.props.classes.canvas} id="inputCanvas" />
+            <canvas
+              className={this.props.classes.canvas}
+              id="outputCanvas"
+              width={256}
+              height={256}
+            />
+          </Grid>
+        </div>
+      )
+    }
+  }
+
   renderProceeTime = () => {
     const { classes } = this.props
-    if (this.state.imageFile.length > 0) {
+    if (this.state.imageFile.length > 0 || this.state.isCaptured) {
       return (
         <div>
           <Divider className={classes.border} />
@@ -288,10 +407,11 @@ class Content extends React.Component {
             <Grid item xs={6}>
               <Paper className={classes.paper}>
                 {this.renderButton()}
+                {this.renderHidden()}
                 <Divider className={classes.border} />
                 <MucGallery selected={modelSelected} propFunc={modelSelect} />
                 <Divider className={classes.border} />
-                {this.renderImage()}
+                {this.renderOutput()}
                 {this.renderProceeTime()}
               </Paper>
             </Grid>
