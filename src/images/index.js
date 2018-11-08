@@ -13,7 +13,7 @@ const image1 = {
 
 const image2 = {
   id: 2,
-  title: 'Muse',
+  title: 'La Muse',
   author: 'Picasso',
   img: style2
 }
