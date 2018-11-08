@@ -43,6 +43,10 @@ const styles = theme => ({
   canvas: {
     marginLeft: '10px',
     marginRight: '10px'
+  },
+  overlay: {
+    zIndex: 10,
+    marginTop: '-360px'
   }
 })
 
@@ -197,14 +201,20 @@ class Content extends React.Component {
     }
   }
 
-  handleWebcam = () => {
+  handleWebcam = async () => {
     if (this.state.isPlaying) {
       this.setState({
         isPlaying: false,
         videoBuff: null
       })
     } else {
-      this.setState({ isPlaying: true, isCaptured: false, imageFile: [] })
+      await this.setState({ isPlaying: true, isCaptured: false, imageFile: [] })
+
+      const canvas = document.getElementById('camOverlayCanvas')
+      const ctx = canvas.getContext('2d')
+      ctx.strokeStyle = 'yellow'
+      ctx.rect(192, 52, 256, 256)
+      ctx.stroke()
     }
   }
 
@@ -342,7 +352,12 @@ class Content extends React.Component {
             screenshotWidth={this.state.videoConstraints.width}
             videoConstraints={this.state.videoConstraints}
           />
-          <canvas className={this.props.classes.canvas} id="camInputCanvas" />
+          <canvas
+            className={this.props.classes.overlay}
+            id="camOverlayCanvas"
+            width={this.state.videoWidth}
+            height={this.state.videoHeight}
+          />
         </Grid>
       )
     } else {
