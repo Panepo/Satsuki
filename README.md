@@ -31,10 +31,9 @@ First visit this [page](https://panepo.github.io/Satsuki/) and follow these step
 
 ![usage](https://github.com/Panepo/Satsuki/blob/master/doc/usage.png)
 
-1. Upload the images
+1. Upload the images or capture an image from camera
    (note that the image will resize to 256x256 to fit neural network input.)
 2. Choice one of the styles
-2. Click transfer
 
 ## Results
 
