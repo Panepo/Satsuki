@@ -6,11 +6,11 @@ export const modelPath3 = './style3/model.json'
 export const modelPath4 = './style4/model.json'
 export const modelPath5 = './style5/model.json'
 
-export const predict = (model, inputId, outputId) => {
+export const predict = async (model, inputId, outputId) => {
   const canvas = document.getElementById(inputId)
   const canvaso = document.getElementById(outputId)
 
-  tf.toPixels(
+  await tf.toPixels(
     tf.tidy(() => {
       const tensorInp = tf.fromPixels(canvas).toFloat()
       const tensorNor = tensorInp.sub(tf.scalar(127.5)).div(tf.scalar(127.5))

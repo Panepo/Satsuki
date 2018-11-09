@@ -6,7 +6,6 @@ import { modelSelect } from '../actions'
 import * as tf from '@tensorflow/tfjs'
 import * as styleTrans from '../deeplearn/StyleTrans'
 import Webcam from 'react-webcam'
-import MucProgress from '../componments/MucProgress'
 import MucText from '../componments/MucText'
 import MucGallery from '../componments/MucGallery'
 import Grid from '@material-ui/core/Grid'
@@ -52,7 +51,6 @@ const styles = theme => ({
 
 class Content extends React.Component {
   state = {
-    isLoading: true,
     isPlaying: false,
     isCaptured: false,
     imageFile: [],
@@ -71,7 +69,6 @@ class Content extends React.Component {
     super(props)
     this.handleUpload = this.handleUpload.bind(this)
     this.handleClear = this.handleClear.bind(this)
-    this.handlePredict = this.handlePredict.bind(this)
     this.handleWebcam = this.handleWebcam.bind(this)
     this.handleCapture = this.handleCapture.bind(this)
   }
@@ -80,37 +77,36 @@ class Content extends React.Component {
   // React lifecycle functions
   // ================================================================================
 
-  componentDidMount = async () => {
-    this.model = await tf.loadModel(styleTrans.modelPath1)
-    // await this.model.predict(tf.zeros([null, 256, 256, 3])).dispose()
-    this.setState({ isLoading: false })
-  }
-
   componentDidUpdate = async prevProps => {
     if (prevProps.modelSelected !== this.props.modelSelected) {
-      switch (this.props.modelSelected) {
-        case 1:
-          this.model = await tf.loadModel(styleTrans.modelPath1)
-          this.handleSwitchStyle()
-          break
-        case 2:
-          this.model = await tf.loadModel(styleTrans.modelPath2)
-          this.handleSwitchStyle()
-          break
-        case 3:
-          this.model = await tf.loadModel(styleTrans.modelPath3)
-          this.handleSwitchStyle()
-          break
-        case 4:
-          this.model = await tf.loadModel(styleTrans.modelPath4)
-          this.handleSwitchStyle()
-          break
-        case 5:
-          this.model = await tf.loadModel(styleTrans.modelPath5)
-          this.handleSwitchStyle()
-          break
-        default:
-          break
+      if (this.state.imageFile.length > 0 || this.state.isCaptured) {
+        const tstart = performance.now()
+        const text = document.getElementById('text-input-time-value')
+        text.value = 'Processing...'
+        switch (this.props.modelSelected) {
+          case 1:
+            this.model = await tf.loadModel(styleTrans.modelPath1)
+            this.handleSwitchStyle(tstart)
+            break
+          case 2:
+            this.model = await tf.loadModel(styleTrans.modelPath2)
+            this.handleSwitchStyle(tstart)
+            break
+          case 3:
+            this.model = await tf.loadModel(styleTrans.modelPath3)
+            this.handleSwitchStyle(tstart)
+            break
+          case 4:
+            this.model = await tf.loadModel(styleTrans.modelPath4)
+            this.handleSwitchStyle(tstart)
+            break
+          case 5:
+            this.model = await tf.loadModel(styleTrans.modelPath5)
+            this.handleSwitchStyle(tstart)
+            break
+          default:
+            break
+        }
       }
     }
   }
@@ -186,18 +182,13 @@ class Content extends React.Component {
     ctxo.clearRect(0, 0, 256, 256)
   }
 
-  handlePredict = async () => {
-    const tstart = performance.now()
-    await styleTrans.predict(this.model, 'inputCanvas', 'outputCanvas')
-    const tend = performance.now()
-    this.setState({
-      processTime: Math.floor(tend - tstart).toString() + ' ms'
-    })
-  }
-
-  handleSwitchStyle = () => {
+  handleSwitchStyle = async tstart => {
     if (this.state.imageFile.length > 0 || this.state.isCaptured) {
-      this.handlePredict()
+      await styleTrans.predict(this.model, 'inputCanvas', 'outputCanvas')
+      const tend = performance.now()
+      this.setState({
+        processTime: Math.floor(tend - tstart).toString() + ' ms'
+      })
     }
   }
 
@@ -261,16 +252,6 @@ class Content extends React.Component {
       }
     }
 
-    const renderTransfer = () => {
-      if (this.state.imageFile.length > 0 || this.state.isCaptured) {
-        return (
-          <Button color="primary" onClick={this.handlePredict}>
-            Transfer
-          </Button>
-        )
-      }
-    }
-
     const renderWebcamPower = onoff => {
       if (onoff) {
         return (
@@ -312,7 +293,6 @@ class Content extends React.Component {
         {renderWebcamPower(this.state.isPlaying)}
         {renderWebcamCapture(this.state.isPlaying)}
         {renderClear()}
-        {renderTransfer()}
       </div>
     )
   }
@@ -338,6 +318,18 @@ class Content extends React.Component {
         />
       </div>
     )
+  }
+
+  renderGallery = () => {
+    const { classes, modelSelect, modelSelected } = this.props
+    if (this.state.imageFile.length > 0 || this.state.isCaptured) {
+      return (
+        <div>
+          <MucGallery selected={modelSelected} propFunc={modelSelect} />
+          <Divider className={classes.border} />
+        </div>
+      )
+    }
   }
 
   renderOutput = () => {
@@ -394,46 +386,23 @@ class Content extends React.Component {
   }
 
   render() {
-    const { classes, modelSelect, modelSelected } = this.props
-    if (this.state.isLoading) {
-      return (
-        <main className={classes.root}>
-          <Grid
-            container
-            className={classes.grid}
-            justify="center"
-            spacing={16}>
-            <Grid item xs={4}>
-              <Paper className={classes.paper}>
-                <MucProgress modelText={'Loading...'} />
-              </Paper>
-            </Grid>
+    const { classes } = this.props
+    return (
+      <main className={classes.root}>
+        <Grid container className={classes.grid} justify="center" spacing={16}>
+          <Grid item xs={6}>
+            <Paper className={classes.paper}>
+              {this.renderButton()}
+              {this.renderHidden()}
+              <Divider className={classes.border} />
+              {this.renderGallery()}
+              {this.renderOutput()}
+              {this.renderProceeTime()}
+            </Paper>
           </Grid>
-        </main>
-      )
-    } else {
-      return (
-        <main className={classes.root}>
-          <Grid
-            container
-            className={classes.grid}
-            justify="center"
-            spacing={16}>
-            <Grid item xs={6}>
-              <Paper className={classes.paper}>
-                {this.renderButton()}
-                {this.renderHidden()}
-                <Divider className={classes.border} />
-                <MucGallery selected={modelSelected} propFunc={modelSelect} />
-                <Divider className={classes.border} />
-                {this.renderOutput()}
-                {this.renderProceeTime()}
-              </Paper>
-            </Grid>
-          </Grid>
-        </main>
-      )
-    }
+        </Grid>
+      </main>
+    )
   }
 }
 

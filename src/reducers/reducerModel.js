@@ -1,7 +1,7 @@
 import { MODEL_SELECT } from '../constants/ConstActionTypes'
 
 const initialState = {
-  modelSelected: 1
+  modelSelected: 0
 }
 
 const reducerModel = (state = initialState, action) => {
