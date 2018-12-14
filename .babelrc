@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "esmodules": false,
         "targets": {
@@ -9,10 +9,13 @@
             "> 3%"
           ]
         }
+      },
+      "@babel/preset-react",
+      {
+        "pragma": "dom", // default pragma is React.createElement
+        "pragmaFrag": "DomFrag", // default is React.Fragment
+        "throwIfNamespace": false // defaults to true
       }
     ]
-  ],
-  "plugins": [
-    "transform-runtime"
   ]
 }
