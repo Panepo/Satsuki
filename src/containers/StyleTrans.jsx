@@ -36,6 +36,8 @@ class StyleTrans extends React.Component {
   state = {
     isPlaying: false,
     isCaptured: false,
+    isUpdate: false,
+    isLoaded: false,
     imageFile: [],
     videoWidth: 640,
     videoHeight: 360,
@@ -70,26 +72,51 @@ class StyleTrans extends React.Component {
           case 1:
             this.model = await tf.loadModel(styleTrans.modelPath1)
             this.handleSwitchStyle(tstart)
+            this.setState({
+              isLoaded: true
+            })
             break
           case 2:
             this.model = await tf.loadModel(styleTrans.modelPath2)
             this.handleSwitchStyle(tstart)
+            this.setState({
+              isLoaded: true
+            })
             break
           case 3:
             this.model = await tf.loadModel(styleTrans.modelPath3)
             this.handleSwitchStyle(tstart)
+            this.setState({
+              isLoaded: true
+            })
             break
           case 4:
             this.model = await tf.loadModel(styleTrans.modelPath4)
             this.handleSwitchStyle(tstart)
+            this.setState({
+              isLoaded: true
+            })
             break
           case 5:
             this.model = await tf.loadModel(styleTrans.modelPath5)
             this.handleSwitchStyle(tstart)
+            this.setState({
+              isLoaded: true
+            })
             break
           default:
             break
         }
+      }
+    } else {
+      if (this.state.isUpdate && this.state.isLoaded) {
+        const tstart = performance.now()
+        const text = document.getElementById('text-input-time-value')
+        text.value = 'Processing...'
+        await this.handleSwitchStyle(tstart)
+        this.setState({
+          isUpdate: false
+        })
       }
     }
   }
@@ -122,6 +149,7 @@ class StyleTrans extends React.Component {
     if (data.length > 0) {
       this.setState({
         imageFile: data,
+        isUpdate: true,
         processTime: Math.floor(tend - tstart).toString() + ' ms',
         isSensing: false
       })
